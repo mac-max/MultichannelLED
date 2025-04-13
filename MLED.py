@@ -1,58 +1,61 @@
+import os
 import tkinter as tk
 from tkinter import ttk
-from adafruit_pca9685 import PCA9685
-from board import SCL, SDA
+
+# --- Für Blinka I2C-Probleme auf älteren Pis ---
+os.environ["BLINKA_FORCECHIP"] = "BCM2XXX"
+
+# --- PCA9685 / I2C Setup ---
+import board
 import busio
+from adafruit_pca9685 import PCA9685
 
-# I2C initialisieren
-i2c = busio.I2C(SCL, SDA)
-pca = PCA9685(i2c)
-pca.frequency = 1000  # 1 kHz für Konstantstromquellen ideal
+# I2C-Verbindung aufbauen
+i2c = busio.I2C(board.SCL, board.SDA)
 
-# GUI Fenster
+# PCA9685 mit Adresse 0x41 initialisieren
+pca = PCA9685(i2c, address=0x41)
+pca.frequency = 1000  # 1 kHz für LEDs / Konstantstromquelle
+
+# --- GUI Setup ---
 root = tk.Tk()
-root.title("LED PWM Steuerung (PCA9685)")
+root.title("LED PWM Steuerung – PCA9685 @ 0x41")
 
-# Referenzen auf Slider
 sliders = []
 
-def set_pwm(channel, value_percent):
-    """Setzt die PWM für einen Kanal basierend auf Prozentwert (0–100%)"""
-    value_percent = max(0, min(100, value_percent))  # begrenzen
-    duty_cycle = int((value_percent / 100.0) * 0xFFFF)
-    pca.channels[channel].duty_cycle = duty_cycle
+def set_pwm(channel, percent):
+    percent = max(0, min(100, percent))  # Begrenzung 0–100%
+    value = int((percent / 100) * 0xFFFF)
+    pca.channels[channel].duty_cycle = value
 
-def slider_callback(channel, var):
-    """Wird aufgerufen, wenn ein Slider bewegt wird"""
+def on_slider_move(channel, var):
     value = var.get()
     set_pwm(channel, value)
 
 def all_off():
-    """Alle Kanäle ausschalten"""
-    for i in range(8):
-        sliders[i].set(0)
-        pca.channels[i].duty_cycle = 0
+    for ch in range(8):
+        sliders[ch].set(0)
+        pca.channels[ch].duty_cycle = 0
 
-# UI erstellen
-for i in range(8):
+# --- GUI Elemente erstellen ---
+for ch in range(8):
     frame = ttk.Frame(root)
-    frame.pack(padx=10, pady=5, fill='x')
+    frame.pack(fill='x', padx=10, pady=4)
 
-    label = ttk.Label(frame, text=f"Kanal {i}")
+    label = ttk.Label(frame, text=f"Kanal {ch}")
     label.pack(side='left')
 
     var = tk.IntVar()
     slider = ttk.Scale(
         frame, from_=0, to=100, orient='horizontal',
         variable=var,
-        command=lambda val, ch=i, v=var: slider_callback(ch, v)
+        command=lambda val, ch=ch, v=var: on_slider_move(ch, v)
     )
     slider.pack(side='left', expand=True, fill='x')
     sliders.append(var)
 
-# Schaltfläche: Alles aus
-off_button = ttk.Button(root, text="Alles aus", command=all_off)
-off_button.pack(pady=10)
+# --- Alles aus Button ---
+btn = ttk.Button(root, text="Alle Kanäle AUS", command=all_off)
+btn.pack(pady=12)
 
-# GUI starten
 root.mainloop()
