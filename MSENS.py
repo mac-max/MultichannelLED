@@ -20,17 +20,17 @@ root.title("AS7341 Live-Spektrum")
 
 # Kanäle laut Datenblatt (korrigiert)
 channels = [
-    ("415 nm", lambda: sensor.channel_405nm),
-    ("435 nm", lambda: sensor.channel_435nm),
-    ("470 nm", lambda: sensor.channel_470nm),
-    ("505 nm", lambda: sensor.channel_505nm),
-    ("555 nm", lambda: sensor.channel_535nm),
-    ("585 nm", lambda: sensor.channel_570nm),
-    ("620 nm", lambda: sensor.channel_600nm),
-    ("670 nm", lambda: sensor.channel_645nm),
-    ("710 nm", lambda: sensor.channel_680nm),
-    ("860 nm", lambda: sensor.channel_710nm),
+    ("415 nm", lambda: sensor.channel_415nm),
+    ("445 nm", lambda: sensor.channel_445nm),
+    ("480 nm", lambda: sensor.channel_480nm),
+    ("515 nm", lambda: sensor.channel_515nm),
+    ("555 nm", lambda: sensor.channel_555nm),
+    ("590 nm", lambda: sensor.channel_590nm),
+    ("630 nm", lambda: sensor.channel_630nm),
+    ("680 nm", lambda: sensor.channel_680nm),
+    ("NIR",    lambda: sensor.nir_channel),
 ]
+
 
 bars = {}
 
