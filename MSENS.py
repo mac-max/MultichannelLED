@@ -28,7 +28,8 @@ channels = [
     ("590 nm", lambda: sensor.channel_590nm),
     ("630 nm", lambda: sensor.channel_630nm),
     ("680 nm", lambda: sensor.channel_680nm),
-    ("NIR",    lambda: sensor.nir_channel),
+    ("NIR", lambda: sensor.channel_nir),
+    ("CLEAR", lambda: sensor.channel_clear),
 ]
 
 
@@ -102,10 +103,6 @@ def update_loop():
                 bars[label_text][0]['value'] = value
                 bars[label_text][1]['text'] = str(value)
 
-            # Clear-Kanal
-            c = sensor.clear_channel
-            clear_bar['value'] = c
-            clear_label['text'] = str(c)
 
             # Flicker
             f = sensor.flicker_detected

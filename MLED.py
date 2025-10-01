@@ -16,7 +16,7 @@ pca.frequency = 1000
 
 # Kanalnamen definieren
 channel_names = [
-    "rot", "weiß", "blau", "grün", "orange", "gelb", "UV", "pink"
+    "640 nm", "weiß", "457 nm", "512 nm", "orange", "gelb", "UV", "pink"
 ]
 
 # GUI Fenster
