@@ -54,22 +54,6 @@ for label_text, _ in channels:
 
     bars[label_text] = (progress, value_label)
 
-# Zusatz: Clear-Kanal
-clear_row = ttk.Frame(root)
-clear_row.pack(fill='x', pady=5, padx=20)
-
-ttk.Label(clear_row, text="Clear", width=8).pack(side='left')
-clear_bar = ttk.Progressbar(clear_row, orient='horizontal', length=300, mode='determinate', maximum=60000)
-clear_bar.pack(side='left', padx=5)
-clear_label = ttk.Label(clear_row, text="0")
-clear_label.pack(side='right')
-
-# Zusatz: Flicker-Anzeige
-flicker_row = ttk.Frame(root)
-flicker_row.pack(pady=(10, 5))
-flicker_label = ttk.Label(flicker_row, text="Flicker: wird erkannt ...", font=("Arial", 10, "bold"))
-flicker_label.pack()
-
 # Lichtquelle schalten
 light_on = False
 def toggle_light():
@@ -82,17 +66,6 @@ def toggle_light():
 btn = ttk.Button(root, text="Licht EIN", command=toggle_light)
 btn.pack(pady=10)
 
-# Hilfsfunktion für Flicker-Anzeige
-def flicker_text(code):
-    return {
-        0: "Kein Flimmern erkannt",
-        1: "50 Hz erkannt",
-        2: "60 Hz erkannt",
-        3: "100 Hz erkannt",
-        4: "120 Hz erkannt",
-        255: "Fehler oder keine Messung"
-    }.get(code, f"Unbekannt ({code})")
-
 # Live-Update in Hintergrundthread
 def update_loop():
     while True:
@@ -102,11 +75,6 @@ def update_loop():
                 value = getter()
                 bars[label_text][0]['value'] = value
                 bars[label_text][1]['text'] = str(value)
-
-
-            # Flicker
-            f = sensor.flicker_detected
-            flicker_label['text'] = "Flicker: " + flicker_text(f)
 
         except Exception as e:
             print("Fehler beim Sensor:", e)
